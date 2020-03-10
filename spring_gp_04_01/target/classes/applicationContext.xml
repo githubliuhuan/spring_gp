@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--声明，哪些组件需要生产-->
+    <!--当spring启动时，读取该配置文件，创建对应的类的对象，并用id做标识-->
+    <!--<bean id="userDAO04" class="com.qianfeng.dao.UserDAOImpl"></bean>-->
+    <bean id="userDAO1" class="com.qianfeng.dao.UserDAOImpl" scope="prototype" init-method="init04" destroy-method="destory04">
+        <property name="a" value="1"/>
+    </bean>
+    <bean id="userDAO04_2" class="com.qianfeng.dao.UserDAOImpl2"></bean>
+    <!--spring生产该对象
+    对象中有一个属性要赋值
+    -->
+    <bean id="userService04" class="com.qianfeng.service.UserServiceImpl">
+        <!--给属性 userDAO赋值
+        值：id="userDAO04"的组件
+        -->
+        <property name="userDAO" ref="userDAO04_2"/>
+    </bean>
+
+    <!--set注入测试-->
+    <bean id="dic4" class="com.qianfeng.di.SetComponent">
+        <!--简单类型 基本类型+String-->
+        <property name="id" value="4"/>
+        <property name="name" value="zhangquan"/>
+        <property name="gender" value="true"/>
+        <!--引用类型-->
+        <property name="userDAO" ref="userDAO04_2"/>
+        <!--List-->
+        <property name="list04">
+            <list>
+                <value>gp04</value>
+                <ref bean="userDAO04_2"/>
+            </list>
+        </property>
+        <!--Set-->
+        <property name="set04">
+            <set>
+                <value>zhangquan</value>
+                <value>zhangquan</value>
+                <value>zhangquan</value>
+                <value>songsong</value>
+                <value>songsong</value>
+            </set>
+        </property>
+        <!--Map-->
+        <property name="map04">
+            <map>
+                <entry key="username" value="suxing"/>
+                <entry key="ud04" value-ref="userDAO04_2"/>
+            </map>
+        </property>
+        <!--Properties-->
+        <property name="props04">
+            <props>
+                <prop key="url">jdbc://mysql//xxxx</prop>
+                <prop key="driver">com.mysql.jdbc.Driver</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--构造函数注入测试-->
+    <bean id="consDI04" class="com.qianfeng.di.ConsComponent">
+        <!--<constructor-arg index="0" type="java.lang.Boolean" value="false"></constructor-arg>
+        <constructor-arg index="1" type="java.lang.Integer" value="4"></constructor-arg>
+        <constructor-arg index="2" type="java.lang.String" value="yueqi"></constructor-arg>-->
+        <!--构造和set注入混用-->
+        <constructor-arg index="0" type="java.lang.Integer" value="4"></constructor-arg>
+        <property name="name" value="yueqi"/>
+        <property name="gender" value="false"/>
+    </bean>
+
+    <!--自动注入测试
+    autowire=自动装载
+    byType=将工厂中和属性类型一致的组件，赋值给对应属性
+    byName=将工厂中和属性名称一致的组件，赋值给对应属性
+    -->
+    <bean id="autoDI04" class="com.qianfeng.di.AutoComponent" autowire="byName"></bean>
+
+    <!--工厂bean
+    细节：1.FactoryBean的生命周期和常规的Bean没区别
+         2.当用户通过getBean获取一个FactoryBean时，返回的并不是工厂Bean本身，而是其生产的对象
+         3.如果想获得工厂Bean本身，需要"&beanID" "&mySqlSessionFactory"
+    -->
+    <bean id="mySqlSessionFactory" class="com.qianfeng.factorybean.MySqlSessionFactoryBean"></bean>
+</beans>
