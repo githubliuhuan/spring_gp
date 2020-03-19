@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--目标-->
+    <bean id="UserService" class="com.qianfeng.service.UserServiceImpl"></bean>
+
+    <!--额外功能：Advice-->
+    <bean id="before04" class="com.qianfeng.advice.MyBeforeAdvice"></bean>
+    <bean id="after04" class="com.qianfeng.advice.MyAfterAdvice"></bean>
+    <bean id="mi04" class="com.qianfeng.advice.MyMethodInterceptor"></bean>
+    <bean id="myThrows04" class="com.qianfeng.advice.MyThrows"></bean>
+
+    <!--编织
+        通过目标的信息，额外功能的信息，组建一个新的类：Proxy
+        -->
+    <aop:config>
+        <!--切入点：目标中方法
+        execution表达式
+        execution(修饰符 返回值 包.类.方法名(参数表))
+        execution(public Integer com.qianfeng.service.UserServiceImpl.qureyUser(Integer,com.qianfeng.pojo.User))
+        execution(* com.qianfeng.service.UserServiceImpl.*(..))
+      -->
+        <aop:pointcut id="pc04" expression="execution(* com.qianfeng.service.UserServiceImpl.*(..))"/>
+        <aop:pointcut id="pc05" expression="execution(* com.qianfeng.service.UserServiceImpl.queryOne(..))"/>
+<!--        <aop:pointcut id="pc06" expression="execution(* com.qianfeng.service.UserServiceImp2.*(..))"/>-->
+        <aop:pointcut id="pc07" expression="execution(* com..UserServiceImpl.insertUser(..))"/>
+        <aop:pointcut id="pc08" expression="execution(* com..*.*(..))"/>
+        <aop:pointcut id="pc09" expression="execution(* com..*.*User(..))"/>
+        <aop:pointcut id="pc10" expression="within(com.qianfeng..UserServiceImpl)"/>
+        <aop:pointcut id="pc11" expression="within (com.qianfeng..UserServiceImpl) and args(com.qianfeng.pojo.User)"/>
+
+        <!--将某个额外功能，编织到某些切入点中-->
+        <aop:advisor advice-ref="before04" pointcut-ref="pc05"/>
+        <aop:advisor advice-ref="after04" pointcut-ref="pc04"/>
+        <aop:advisor advice-ref="mi04" pointcut-ref="pc11"/>
+        <aop:advisor advice-ref="myThrows04" pointcut-ref="pc08"/>
+
+    </aop:config>
+
+</beans>
