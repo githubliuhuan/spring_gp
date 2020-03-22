@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--映射文件-->
+<mapper namespace="com.qianfeng.dao.UserDAO">
+
+<resultMap id="user_orders" type="User" autoMapping="true">
+    <id column="id" property="id"/>
+</resultMap>
+    <select id="queryUserById" resultMap="user_orders" parameterType="int" statementType="PREPARED">
+        select id,username,password,regist_time registTime
+        from t_user
+        where id=#{id}
+    </select>
+    
+    <select id="queryUsers" resultMap="User">
+        select id,username,password,regist_time registTime
+        from t_user
+    </select>
+
+    <insert id="insertUser" parameterType="User">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into t_user (username,password,regist_time)
+        values (#{username},#{password},#{registTime})
+    </insert>
+</mapper>
